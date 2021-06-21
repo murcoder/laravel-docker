@@ -24,28 +24,18 @@ You can customize all the versions and packages in the *docker-compose.yaml* fil
    127.0.0.1 dev.my-application.com
    ```
    
-4. __SSL:__ Create and register a self signed SSL certificate (see chapter SSL below for more informations)
+4. __SSL:__ Create and register a self signed SSL certificate (see chapter _SSL_ below for more informations)
 
 
-5. __Environment:__ Copy content of _.env.development_ to your local _.env_ file
-
-
-7. __Start:__ Build and start the docker containers in your docker directory
+5. __Start:__ Build and start the docker containers in your docker directory
    ```
    docker-compose up -d
    ```
 
-8. __DONE!__ open https://dev.my-application.com/
+6. __DONE!__ open https://dev.my-application.com/
 
 <br>
 
-## How to work
-__Into the app container__: Get in your app container and install composer packages for instance
-```
-docker-compose exec app bash
-cd /var/www/
-composer install
-```
 
 <br>
 
@@ -88,7 +78,7 @@ PASSWORD=root
 ```
 
 ### Laravel
- Create the __.env__ file in your root project directory and add the database settings:
+Add this DB configuration in your __.env__ file:
 ```
 DB_CONNECTION=mysql #defined in /app/config/database.php
 DB_HOST=db
