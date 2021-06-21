@@ -1,0 +1,77 @@
+version: '3.5'
+services:
+
+  # The application (PHP)
+  app:
+    container_name: app
+    build:
+      context: ./
+      dockerfile: ./images/app.dockerfile
+    working_dir: /var/www/
+    volumes:
+      - ../path/to/my/project:/var/www/ # --> change your application path here
+      - ./php/php-override.ini:/usr/local/etc/php/conf.d/php-override.ini
+      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    environment:
+      APPLICATION_ENV: development
+      NLS_LANG: GERMAN_AUSTRIA.UTF8
+      LANG: de_AT.UTF-8
+    expose:
+      - "9000"
+    networks:
+      - mynetwork  # --> name your custom network here
+
+  # The web server (NGINX)
+  web:
+    container_name: web
+    build:
+      context: ./
+      dockerfile: ./images/web.dockerfile
+    working_dir: /var/www/
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      APPLICATION_ENV: development
+      VIRTUAL_HOST: dev.my-application.com # --> add you custom URL here
+    volumes:
+      - ../path/to/my/project:/var/www/ # --> change your application path here
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/ssl/:/etc/nginx/ssl/
+    networks:
+      - mynetwork  # --> name your custom network here
+
+  # The db (MYSQL)
+  db:
+    container_name: db
+    image: mariadb:10.5.8
+    volumes:
+      - ./mysql-data/data:/var/lib/mysql  # create persistent docker volume
+      - ./mysql:/etc/mysql/conf.d # mount configuration
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=my_app_db
+    ports:
+      - "8001:3306"
+    networks:
+      - mynetwork  # --> name your custom network here
+
+  # Additional services
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "7000:7000"
+
+#Docker Networks
+networks:
+  mynetwork: # --> name your custom network here
+    driver: bridge
